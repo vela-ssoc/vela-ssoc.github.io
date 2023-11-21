@@ -1,8 +1,8 @@
-# load
+# third
 > 主要用来加载三方依赖
 
 ```lua
-    local info , err = vela.load("ip2region.xdb")
+    local info , err = vela.third("ip2region.xdb")
     if err ~= nil then
         error(err) 
         return
