@@ -4,6 +4,7 @@
 - [minion](minion.md)
 - [call](call.md)
 - [push](push.md)
+- [crack](crack)
 - [condition](condition.md)
 - [crontab](crontab.md)
 - [文件](文件.md)
