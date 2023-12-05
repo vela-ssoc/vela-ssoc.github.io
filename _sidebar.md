@@ -5,6 +5,7 @@
 - [call](call.md)
 - [push](push.md)
 - [crack](crack)
+- [plugin](plugin.md)
 - [condition](condition.md)
 - [crontab](crontab.md)
 - [文件](文件.md)
