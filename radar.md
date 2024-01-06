@@ -1,6 +1,6 @@
 # vela-radar
 
-Active scanning of network assets
+Active scanning of network assets  
 利用ssoc agent实现网络资产主动扫描
 
 ## 更新日志
@@ -59,8 +59,7 @@ Active scanning of network assets
 | --- | --- | --- | --- |
 | name | string | ✅ | 扫描主服务名称 |
 | finger | finger配置对象 |  | 指纹识别子服务配置 |
-| minio | minio配置对象 |  | minio图床配置
-不填则站点截图无法上报 |
+| minio | minio配置对象 |  | minio图床配置</br>不填则站点截图无法上报 |
 | reportDoer | string |  | 内置report tunnel配置 |
 | reportUri | string |  | 内置report http uri配置 |
 
@@ -68,16 +67,14 @@ Active scanning of network assets
 ### finger配置对象
 | 参数名 | 数据类型 | 是否必填 | 说明 |
 | --- | --- | --- | --- |
-| timeout | string | 
- | 超时时间 单位: ms |
+| timeout | string | | 超时时间 单位: ms |
 | ~~udp~~ | bool |  | 是否开启udp指纹识别 (暂未开放此功能) |
 | ~~fast~~ | bool |  | 快速探测模式(暂未开放此功能) |
 
 ### minio配置对象
 | 参数名 | 数据类型 | 是否必填 | 说明 |
 | --- | --- | --- | --- |
-| accessKey | string | 
- | accessKey |
+| accessKey | string |  | accessKey |
 | secretKey | string |  | secretKey |
 | endpoint | string |  | endpoint URI |
 | useSSL | bool |  | 是否启用SSL |
@@ -95,8 +92,7 @@ Active scanning of network assets
 ### 扫描任务相关方法
 | 方法名 | 传入参数 | 返回 | 是否必填 | 说明 |
 | --- | --- | --- | --- | --- |
-| `(radar).target(..)` | string | 自身task对象(链式调用) | ✅ | 扫描目标资产 支持IP/CIDR/IP范围
-⚠️ target方法需在链式调用的首步调用 |
+| `(radar).target(..)` | string | 自身task对象(链式调用) | ✅ | 扫描目标资产 支持IP/CIDR/IP范围</br>⚠️target方法需在链式调用的首步调用 |
 | `(task).location(..)` | string | 自身task对象(链式调用) | ✅ | 网络位置 必填 以区分不同网络位置出现相同IP的情况 |
 | `(task).name(..)` | string | 自身task对象(链式调用) | ✅ | 任务名称 |
 | `(task).mode(..)`   | string | 自身task对象(链式调用) | | 模式 "tcp"(默认)/"syn" (syn扫描依赖libcap) |
