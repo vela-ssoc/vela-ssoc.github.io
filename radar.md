@@ -105,7 +105,8 @@ function(host)
   es.send(host)
 end
 ```  
-传入参数可以任意取名, 传入的数据结构固定为:   
+传入参数可以任意取名, 传入的数据结构固定为host对象, 参数有且仅有一个  
+####  host对象
 | 参数名 | 数据类型 | 说明 |
 | --- | --- | --- |
 | ip         | string       | IP                      |
@@ -122,9 +123,10 @@ end
 | banner     | []byte(json) | tcp服务的banner信息          |
 
 
-HttpInfo的数据结构如下表:  
+上表中的http_info字段是一个对象, HttpInfo的数据结构如下表
+#### HttpInfo对象
 | 字段            | 类型       | JSON 字段           | BSON 字段           | 描述                                |
-|---------------|----------|-------------------|-------------------|-----------------------------------|
+|-------------|--------|-----------------|-----------------|---------------------------------|
 | StatusCode    | int      | "status_code"     | "status_code"     | 响应状态码                             |
 | ContentLength | int      | "content_length"  | "content_length"  | 响应包大小                             |
 | URL           | string   | "url"             | "url"             | HTTP URL                          |
@@ -140,11 +142,7 @@ HttpInfo的数据结构如下表:
 | TLSCommonName | string   | "tls_common_name" | "tls_common_name" | TLS 证书的 CommonName                |
 | TLSDNSNames   | []string | "tls_dns_names"   | "tls_dns_names"   | TLS 证书的 DNSName                   |
 
-
-
-
 **返回值** 无  
-
 
 ### 扫描任务相关方法
 | 方法名 | 传入参数 | 返回 | 是否必填 | 说明 |
