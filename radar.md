@@ -120,12 +120,11 @@ end
 | component  | []string     | 组件标签                    |
 | http_info  | *HttpInfo    | web服务的指纹以及相关信息          |
 | banner     | []byte(json) | tcp服务的banner信息          |
-|            |              |                         |
-|            |              |                         |
+
 
 HttpInfo的数据结构如下表:  
-| 字段 | 类型 | JSON 字段 | BSON 字段 | 说明 |
-| --- | --- | --- | --- | --- | --- |
+| 字段            | 类型       | JSON 字段           | BSON 字段           | 描述                                |
+|---------------|----------|-------------------|-------------------|-----------------------------------|
 | StatusCode    | int      | "status_code"     | "status_code"     | 响应状态码                             |
 | ContentLength | int      | "content_length"  | "content_length"  | 响应包大小                             |
 | URL           | string   | "url"             | "url"             | HTTP URL                          |
@@ -140,6 +139,7 @@ HttpInfo的数据结构如下表:
 | Fingerprints  | []string | "fingerprints"    | "fingerprints"    | 识别到的 web 指纹                       |
 | TLSCommonName | string   | "tls_common_name" | "tls_common_name" | TLS 证书的 CommonName                |
 | TLSDNSNames   | []string | "tls_dns_names"   | "tls_dns_names"   | TLS 证书的 DNSName                   |
+
 
 
 
