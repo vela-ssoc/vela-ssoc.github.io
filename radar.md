@@ -21,6 +21,11 @@ Active scanning of network assets
 2024-01-03   v0.4.5   修复扫描速率参数设置问题  
 2024-01-05   v0.4.5   优化扫描参数传入  
 2024-01-06   v0.4.6   继续完善LUA SDK 和HTTP API    
+2024-01-08   v0.4.7   放宽传输层最大发包速率上限  
+2024-01-08   v0.4.7   修复内置TOP5000端口号部分错误   
+2024-01-09   v0.4.8   修复对任务监视器的通道关闭处理相关错误  
+2024-01-09   v0.4.8   完善管道操作数据结构和相关文档   
+
 
 ## 功能
 
@@ -34,7 +39,7 @@ Active scanning of network assets
 8. 支持禁止扫描的白名单ip设置, 支持ip,CIDR,地址范围以及用","分割组合输入
 9. web站点截图功能, 并上传至minio图床
 10. 支持三方指纹库动态加载和更新(基于三方依赖)
-11. 设置扫描时间段(定时暂停与开始)
+11. 设置扫描排除时间段(在指定时间段内暂停)
 
 ## todo
 
@@ -62,6 +67,7 @@ Active scanning of network assets
 | minio | minio配置对象 |  | minio图床配置</br>不填则站点截图无法上报 |
 | reportDoer | string |  | 内置report tunnel配置 |
 | reportUri | string |  | 内置report http uri配置 |
+| debug   | bool |  | 是否开启debug模式(console输出debug日志) |
 
 **返回值** radar对象
 ### finger配置对象
@@ -81,13 +87,64 @@ Active scanning of network assets
 
 
 ### (rander).start()方法
-启动服务
-参数 无
-返回值 无
+启动服务  
+**传入参数** 无  
+**返回值** 无  
 ### (rander).define()方法
-启动内部API调用功能
-参数 无 
-返回值 无
+启动内部API调用功能  
+**传入参数** 无  
+**返回值** 无  
+
+### (rander).pipe()方法
+结果输出管道, 可以通过该管道实时获取扫描结果   
+**传入参数**  
+传入一个或者多个function来链式调用
+例如
+```lua
+function(host)
+  es.send(host)
+end
+```  
+传入参数可以任意取名, 传入的数据结构固定为:  
+| **参数名**    | **数据类型**     | **说明**                  |
+|------------|--------------|-------------------------|
+| ip         | string       | IP                      |
+| port       | int          | 端口                      |
+| tls        | bool         |                         |
+| location   | string       | 地理位置                    |
+| host       | string       | 主机域名 (扫内网的时候一般为空或者填 IP) |
+| protocol   | string       | 应用层协议                   |
+| transport  | string       | 传输层协议 tcp/udp           |
+| version    | string       | 应用(或者协议)版本              |
+| comment    | string       | 备注信息                    |
+| component  | []string     | 组件标签                    |
+| http_info  | *HttpInfo    | web服务的指纹以及相关信息          |
+| banner     | []byte(json) | tcp服务的banner信息          |
+|            |              |                         |
+|            |              |                         |
+
+HttpInfo的数据结构如下表:
+| **字段**        | **类型**   | **JSON 字段**       | **BSON 字段**       | **说明**                           |
+|---------------|----------|-------------------|-------------------|-----------------------------------|
+| StatusCode    | int      | "status_code"     | "status_code"     | 响应状态码                             |
+| ContentLength | int      | "content_length"  | "content_length"  | 响应包大小                             |
+| URL           | string   | "url"             | "url"             | HTTP URL                          |
+| Location      | string   | "location"        | "location"        | 301/302 重定向地址                     |
+| Title         | string   | "title"           | "title"           | 网站 title                          |
+| Server        | string   | "server"          | "server"          | HTTP Header 中的 server 字段          |
+| Body          | string   | "body"            | "body"            | HTTP body                         |
+| Header        | string   | "header"          | "header"          | HTTP Header 的数据                   |
+| FaviconMH3    | string   | "favicon_mh3"     | "favicon_mh3"     | favicon 的 mh3, mh3 一种比 md5 更快的算法  |
+| FaviconMD5    | string   | "favicon_md5"     | "favicon_md5"     | favicon 的 md5                     |
+| ScreenshotURL | string   | "screenshot_url"  | "screenshot_url"  | 网站截图的 URL                         |
+| Fingerprints  | []string | "fingerprints"    | "fingerprints"    | 识别到的 web 指纹                       |
+| TLSCommonName | string   | "tls_common_name" | "tls_common_name" | TLS 证书的 CommonName                |
+| TLSDNSNames   | []string | "tls_dns_names"   | "tls_dns_names"   | TLS 证书的 DNSName                   |
+
+
+
+**返回值** 无  
+
 
 ### 扫描任务相关方法
 | 方法名 | 传入参数 | 返回 | 是否必填 | 说明 |
@@ -104,6 +161,7 @@ Active scanning of network assets
 | `(task).fingerDB(..)`   | bool | 自身task对象(链式调用) |  | 指定http指纹库三方依赖(不指定则使用内置默认指纹库) |
 | `(task).screenshot(..)`   | bool | 自身task对象(链式调用) |  | 是否开启站点截图功能 |
 | `(task).ping(..)`   | bool | 自身task对象(链式调用) |  | 是否开启ping存活探测 |
+| `(task).debug(..)`   | bool | 自身task对象(链式调用) |  | 是否开启debug模式(console输出debug日志) |
 | `(task).pool(..)`   | int scan,int finger,int ping | 自身task对象(链式调用) |  | ping探测并发数率 默认10</br>scan并发数率 默认10</br>指纹识别并发数率 默认50 |
 | `(task).excludeTimeRange(..)`   | string | 自身task对象(链式调用) |  | 扫描排除时间段 示例</br>"daily,9:00,17:00" 排除每天的早9至晚5</br>"everyWorKDay,9:00,17:00"排除每个工作日的早9至晚5</br>"OpeningtimeBroad,,"排除开盘时间(宽泛),所有工作日以及周六的0点至5点 |
 | `(task).run(..)` | null | null | ✅ | 开启扫描 </br>⚠️run方法需在链式调用的最后一步调用 |
@@ -113,11 +171,13 @@ Active scanning of network assets
 ## 内部HTTP API
 
 ### **GET** `/api/v1/arr/agent/radar/status`
-获取当前扫描服务状态
+获取当前扫描服务状态  
+**响应**:   
+radar扫描主服务信息以及当前运行任务信息(若存在)  
 
 ### **POST** `/api/v1/arr/agent/radar/runscan`
-下发和运行扫描任务 ( 如果已有扫描任务正在进行则无法运行 )
-POST数据包类型 JSON
+下发和运行扫描任务 ( 如果已有扫描任务正在进行则无法运行 )  
+POST数据包体类型(content-type) : **JSON**  
 #### 参数  :
 | 参数名 | 数据类型 | 是否必填 | 说明 |
 | --- | --- | --- | --- |
@@ -136,6 +196,10 @@ POST数据包类型 JSON
 | `pool_scan`   | int |  | scan并发数率 默认10 |
 | `pool_finger`  | int |  | 指纹识别并发数率 默认50 |
 | `excludeTimeRange`   | string |  | 扫描排除时间段 示例</br>"daily,9:00,17:00" 排除每天的早9至晚5</br>"everyWorKDay,9:00,17:00"排除每个工作日的早9至晚5</br>"OpeningtimeBroad,,"排除开盘时间(宽泛),所有工作日以及周六的0点至5点 ||  |  |  |  |
+
+**响应**:   
+成功时, 返回本次提交扫描的任务信息(JSON格式) status_code为 200  
+已经有任务在运行时或者参数设置错误时, 返回status_code为 500, 内容为错误信息  
 
 **例子**:
 ```json
@@ -180,3 +244,4 @@ rr.task("192.168.1.1/24").port("top1000").httpx(true).exclude("192.168.1.100,192
 ## ⚠️注意
 
 1. 在做外网探测时, 可能会因为syn的包过多, 导致网络无法链接
+2. 使用syn做扫描时, 暂时无法实时计算准确进度
