@@ -58,7 +58,7 @@ Active scanning of network assets
 
 ## Lua API
 ### 主服务 radar
-**初始化方法 vela.radar()**
+**初始化方法 vela.radar{}**
 
 | 参数名 | 数据类型 | 是否必填 | 说明 |
 | --- | --- | --- | --- |
@@ -163,6 +163,24 @@ end
 | `(task).pool(..)`   | int scan,int finger,int ping | 自身task对象(链式调用) |  | ping探测并发数率 默认10</br>scan并发数率 默认10</br>指纹识别并发数率 默认50 |
 | `(task).excludeTimeRange(..)`   | string | 自身task对象(链式调用) |  | 扫描排除时间段 示例</br>"daily,9:00,17:00" 排除每天的早9至晚5</br>"everyWorKDay,9:00,17:00"排除每个工作日的早9至晚5</br>"OpeningtimeBroad,,"排除开盘时间(宽泛),所有工作日以及周六的0点至5点 |
 | `(task).run(..)` | null | null | ✅ | 开启扫描 </br>⚠️run方法需在链式调用的最后一步调用 |
+
+
+### (rander).chrome()方法
+web站点截图服务相关配置  
+可以全部不填 
+```lua
+(radar).chrome({})
+```
+**参数** lua table    
+
+| 参数名 | 数据类型 | 是否必填 | 说明 |
+| --- | --- | --- | --- |
+| save | string |  | 是否本地保存的站点截图图片 |
+| thread | string |  | 同时启动的tab个数 |
+| timeout | string |  | 站点打开超时时间(单位:秒) |
+| resultDir | string |  | 本地保存的站点截图图片文件夹</br>⚠️save选项开启时才起作用 |
+| debug | bool |  | 是否开启debug日志打印 |
+**返回值** 无   
 
 
 

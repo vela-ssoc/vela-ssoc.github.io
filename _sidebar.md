@@ -59,6 +59,7 @@
 - [终端标签](自动标签.md)
 - [csv](csv.md)
 - [radar网络资产扫描探测](radar.md)
+- [barracuda日志解析器](barracuda.md)
 - [案例1](案例1.md)
 - [案例2](案例2.md)
 - [案例3](案例3.md)
