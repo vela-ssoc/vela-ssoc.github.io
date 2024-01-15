@@ -207,7 +207,7 @@ vela.Debug(d.raw)
 vela.Debug(d.Info.ReasonCN)
 ```
 ```lua
-local d=vela.barracuda.format("Jan 11 14:57:19 10.10.10.199  outbound/smtp: 127.0.0.1 1704956157-1d4ef4516d406260001-zMxSwR 0 0 SEND ENC 1 322A41A8225 250 ok message accepted [1704956239.23577.348272,S=2524227]  #to#10.10.10.10[10.10.10.10]:25")vela.Debug("%T",d)
+local d=vela.barracuda.format("Jan 11 14:57:19 10.10.10.199  outbound/smtp: 127.0.0.1 1704956157-1d4ef4516d406260001-zMxSwR 0 0 SEND ENC 1 322A41A8225 250 ok message accepted [1704956239.23577.348272,S=2524227]  #to#10.10.10.10[10.10.10.10]:25")
 vela.Debug("%v",d)
 vela.Debug("%s",d.raw)
 vela.Debug(d.Info.ActionCN)
