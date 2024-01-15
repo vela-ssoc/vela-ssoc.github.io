@@ -201,11 +201,16 @@ barracuda的`LogEntry`对象, 字段如下所示
 
 ## 示例
 ```lua
-d=vela.barracuda.fromat("Jan 11 06:58:03 10.10.10.111  inbound/pass1: unknown[114.114.114.114] 1704927410-1920756-20844-227386-1 1704927410 1704927410 RECV - - 2 83 535 Error: authentication failed [zhangshan@163.com]")
-vela.Debug("%v",d)
+local d=vela.barracuda.format("Jan 11 06:58:03 10.10.10.111  inbound/pass1: unknown[114.114.114.114] 1704927410-1920756-20844-227386-1 1704927410 1704927410 RECV - - 2 83 535 Error: authentication failed [haojiahuo@163.com]")
+ela.Debug("%v",d)
+vela.Debug(d.raw)
+vela.Debug(d.Info.ReasonCN)
 ```
 ```lua
-vela.barracuda.fromat("Jan 11 06:58:03 10.10.10.111  inbound/pass1: unknown[114.114.114.114] 1704927410-1920756-20844-227386-1 1704927410 1704927410 RECV - - 2 83 535 Error: authentication failed [zhangshan@163.com]")
+local d=vela.barracuda.format("Jan 11 14:57:19 10.10.10.199  outbound/smtp: 127.0.0.1 1704956157-1d4ef4516d406260001-zMxSwR 0 0 SEND ENC 1 322A41A8225 250 ok message accepted [1704956239.23577.348272,S=2524227]  #to#10.10.10.10[10.10.10.10]:25")vela.Debug("%T",d)
+vela.Debug("%v",d)
+vela.Debug("%s",d.raw)
+vela.Debug(d.Info.ActionCN)
 ```
 ## 参考
 https://campus.barracuda.com/product/emailsecuritygateway/doc/12193950/syslog-and-the-barracuda-email-security-gateway/?lang=2AJYS
