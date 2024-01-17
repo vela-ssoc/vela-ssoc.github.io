@@ -25,14 +25,14 @@ Active scanning of network assets
 2024-01-08   v0.4.7   修复内置TOP5000端口号部分错误  
 2024-01-09   v0.4.8   修复对任务监视器的通道关闭处理相关错误  
 2024-01-09   v0.4.8   完善管道操作数据结构和相关文档  
-2024-01-10   v0.4.8   修复站点截图模块一些边界条件问题  
-2024-01-16   v0.4.9   内部HTTP API升级改造  
-2024-01-16   v0.4.9   内部HTTP API支持展示上一次历史任务信息  
-2024-01-17   v0.4.9   内部HTTP API任务详细信息数据结构优化  
-2024-01-17   v0.4.9   扫描任务状态相关功能优化  
-2024-01-17   v0.4.9   支持展示和动态计算扫描开始时间,扫描结束时间和扫描耗时  
-2024-01-17   v0.4.9   实时上报扫描结果时, 加入了扫描任务ID, 方便后期查询         
-2024-01-17   v0.4.9   整理完善文档  
+2024-01-10   v0.4.8   修复站点截图模块一些边界条件问题  
+2024-01-16   v0.4.9   内部HTTP API升级改造  
+2024-01-16   v0.4.9   内部HTTP API支持展示上一次历史任务信息  
+2024-01-17   v0.4.9   内部HTTP API任务详细信息数据结构优化  
+2024-01-17   v0.4.9   扫描任务状态相关功能优化  
+2024-01-17   v0.4.9   支持展示和动态计算扫描开始时间,扫描结束时间和扫描耗时  
+2024-01-17   v0.4.9   实时上报扫描结果时, 加入了扫描任务ID, 方便后期查询  
+2024-01-17   v0.4.9   整理完善文档  
 
 
 ## 功能
@@ -104,7 +104,7 @@ Active scanning of network assets
 **返回值** 无  
 
 ### (rander).pipe()方法
-结果输出管道, 可以通过该管道实时获取扫描结果   
+结果输出管道, 可以通过该管道实时获取扫描结果   
 **传入参数**  
 传入一个或者多个function来链式调用
 例如
@@ -117,41 +117,41 @@ end
 ####  host对象
 | 参数名 | 数据类型 | 说明 |
 | --- | --- | --- |
-| ip         | string       | IP                      |
-| port       | int          | 端口                      |
-| tls        | bool         |                         |
-| location   | string       | 地理位置                    |
-| host       | string       | 主机域名 (扫内网的时候一般为空或者填 IP) |
-| protocol   | string       | 应用层协议                   |
-| transport  | string       | 传输层协议 tcp/udp           |
-| version    | string       | 应用(或者协议)版本              |
-| comment    | string       | 备注信息                    |
-| component  | []string     | 组件标签                    |
-| http_info  | *HttpInfo    | web服务的指纹以及相关信息          |
-| banner     | []byte(json) | tcp服务的banner信息          |
-| task_id    | string       | 任务Id                    |  
+| ip         | string       | IP                      |
+| port       | int          | 端口                      |
+| tls        | bool         |                         |
+| location   | string       | 地理位置                    |
+| host       | string       | 主机域名 (扫内网的时候一般为空或者填 IP) |
+| protocol   | string       | 应用层协议                   |
+| transport  | string       | 传输层协议 tcp/udp           |
+| version    | string       | 应用(或者协议)版本              |
+| comment    | string       | 备注信息                    |
+| component  | []string     | 组件标签                    |
+| http_info  | *HttpInfo    | web服务的指纹以及相关信息          |
+| banner     | []byte(json) | tcp服务的banner信息          |
+| task_id    | string       | 任务Id                    |  
 
 ⚠️ report实时上报扫描结果时,数据结构也是这个  
 
 
 上表中的http_info字段是一个对象, HttpInfo的数据结构如下表
 #### HttpInfo对象
-| 字段            | 类型       | JSON 字段           | BSON 字段           | 描述                                |
+| 字段            | 类型       | JSON 字段           | BSON 字段           | 描述                                |
 |-------------|--------|-----------------|-----------------|---------------------------------|
-| StatusCode    | int      | "status_code"     | "status_code"     | 响应状态码                             |
-| ContentLength | int      | "content_length"  | "content_length"  | 响应包大小                             |
-| URL           | string   | "url"             | "url"             | HTTP URL                          |
-| Location      | string   | "location"        | "location"        | 301/302 重定向地址                     |
-| Title         | string   | "title"           | "title"           | 网站 title                          |
-| Server        | string   | "server"          | "server"          | HTTP Header 中的 server 字段          |
-| Body          | string   | "body"            | "body"            | HTTP body                         |
-| Header        | string   | "header"          | "header"          | HTTP Header 的数据                   |
-| FaviconMH3    | string   | "favicon_mh3"     | "favicon_mh3"     | favicon 的 mh3, mh3 一种比 md5 更快的算法  |
-| FaviconMD5    | string   | "favicon_md5"     | "favicon_md5"     | favicon 的 md5                     |
-| ScreenshotURL | string   | "screenshot_url"  | "screenshot_url"  | 网站截图的 URL                         |
-| Fingerprints  | []string | "fingerprints"    | "fingerprints"    | 识别到的 web 指纹                       |
-| TLSCommonName | string   | "tls_common_name" | "tls_common_name" | TLS 证书的 CommonName                |
-| TLSDNSNames   | []string | "tls_dns_names"   | "tls_dns_names"   | TLS 证书的 DNSName                   |
+| StatusCode    | int      | "status_code"     | "status_code"     | 响应状态码                             |
+| ContentLength | int      | "content_length"  | "content_length"  | 响应包大小                             |
+| URL           | string   | "url"             | "url"             | HTTP URL                          |
+| Location      | string   | "location"        | "location"        | 301/302 重定向地址                     |
+| Title         | string   | "title"           | "title"           | 网站 title                          |
+| Server        | string   | "server"          | "server"          | HTTP Header 中的 server 字段          |
+| Body          | string   | "body"            | "body"            | HTTP body                         |
+| Header        | string   | "header"          | "header"          | HTTP Header 的数据                   |
+| FaviconMH3    | string   | "favicon_mh3"     | "favicon_mh3"     | favicon 的 mh3, mh3 一种比 md5 更快的算法  |
+| FaviconMD5    | string   | "favicon_md5"     | "favicon_md5"     | favicon 的 md5                     |
+| ScreenshotURL | string   | "screenshot_url"  | "screenshot_url"  | 网站截图的 URL                         |
+| Fingerprints  | []string | "fingerprints"    | "fingerprints"    | 识别到的 web 指纹                       |
+| TLSCommonName | string   | "tls_common_name" | "tls_common_name" | TLS 证书的 CommonName                |
+| TLSDNSNames   | []string | "tls_dns_names"   | "tls_dns_names"   | TLS 证书的 DNSName                   |
 
 **返回值** 无  
 
@@ -182,7 +182,7 @@ web站点截图服务相关配置
 ```lua
 (radar).chrome({})
 ```
-**参数** lua table    
+**参数** lua table    
 
 | 参数名 | 数据类型 | 是否必填 | 说明 |
 | --- | --- | --- | --- |
@@ -191,7 +191,7 @@ web站点截图服务相关配置
 | timeout | string |  | 站点打开超时时间(单位:秒) |
 | resultDir | string |  | 本地保存的站点截图图片文件夹</br>⚠️save选项开启时才起作用 |
 | debug | bool |  | 是否开启debug日志打印 |  
-**返回值** 无   
+**返回值** 无   
 
 
 
@@ -255,40 +255,40 @@ radar扫描主服务信息以及当前运行任务信息(若存在)
 ```go
 // 字段信息备注查看下面"下发扫描任务"表格
 type Option struct {
-	Location         string         `json:"location"`
-	Mode             string         `json:"mode"`
-	Target           string         `json:"target"`
-	ExcludedTarget   string         `json:"exclude_target"`
-	Port             string         `json:"port"`
-	Rate             int            `json:"rate"`
-	Timeout          int            `json:"timeout"`
-	Httpx            bool           `json:"httpx"`
-	Ping             bool           `json:"ping"`
-	FingerDB         string         `json:"finger_db"`
-	Screenshot       bool           `json:"screenshot"`
-	Pool             Pool           `json:"pool"`
+	Location         string         `json:"location"`
+	Mode             string         `json:"mode"`
+	Target           string         `json:"target"`
+	ExcludedTarget   string         `json:"exclude_target"`
+	Port             string         `json:"port"`
+	Rate             int            `json:"rate"`
+	Timeout          int            `json:"timeout"`
+	Httpx            bool           `json:"httpx"`
+	Ping             bool           `json:"ping"`
+	FingerDB         string         `json:"finger_db"`
+	Screenshot       bool           `json:"screenshot"`
+	Pool             Pool           `json:"pool"`
 	ExcludeTimeRange util.TimeRange `json:"exclude_time_range"`
-	MinioCfg         util.MinioCfg  `json:"-"`
+	MinioCfg         util.MinioCfg  `json:"-"`
 }
 
 type Pool struct {
-	Ping   int `json:"ping"`
-	Scan   int `json:"scan"`
+	Ping   int `json:"ping"`
+	Scan   int `json:"scan"`
 	Finger int `json:"finger"`
 }
 
 type TimeRange struct {
 	Daily string `json:"daily"`
 	Begin string `json:"begin"`
-	End   string `json:"end"`
+	End   string `json:"end"`
 }
 
 type MinioCfg struct {
 	AccessKey string
 	SecretKey string
-	Name      string
+	Name      string
 	Endpoint  string
-	UseSSL    bool
+	UseSSL    bool
 }
 ```
 #### 数据示例
@@ -302,40 +302,40 @@ type MinioCfg struct {
   "default_timeout": 500,
   "task": "",
   "last_task": {
-    "name": "测试扫描任务",
-    "id": "dd57a313-ba8c-46c2-903f-77c6d067179d",
-    "debug": false,
-    "status": 2,
-    "start_time": "2024-01-17 13:32:58",
-    "end_time": "2024-01-17 13:35:13",
-    "timeuse_second": 135.28085949,
-    "timeuse_msg": "0小时02分钟15秒",
-    "task_all_num": 257280,
-    "task_success_num": 257280,
-    "task_process": "100.00",
-    "option": {
-      "location": "测试本地网",
-      "mode": "pn",
-      "target": "192.168.1.1/24",
-      "exclude_target": "",
-      "port": "top1000",
-      "rate": 2000,
-      "timeout": 800,
-      "httpx": true,
-      "ping": false,
-      "fingerDB": "",
-      "screenshot": false,
-      "pool": {
-        "ping": 10,
-        "scan": 10,
-        "finger": 50
-      },
-      "exclude_time_range": {
-        "daily": "",
-        "begin": "",
-        "end": ""
-      }
-    }
+    "name": "测试扫描任务",
+    "id": "dd57a313-ba8c-46c2-903f-77c6d067179d",
+    "debug": false,
+    "status": 2,
+    "start_time": "2024-01-17 13:32:58",
+    "end_time": "2024-01-17 13:35:13",
+    "timeuse_second": 135.28085949,
+    "timeuse_msg": "0小时02分钟15秒",
+    "task_all_num": 257280,
+    "task_success_num": 257280,
+    "task_process": "100.00",
+    "option": {
+      "location": "测试本地网",
+      "mode": "pn",
+      "target": "192.168.1.1/24",
+      "exclude_target": "",
+      "port": "top1000",
+      "rate": 2000,
+      "timeout": 800,
+      "httpx": true,
+      "ping": false,
+      "fingerDB": "",
+      "screenshot": false,
+      "pool": {
+        "ping": 10,
+        "scan": 10,
+        "finger": 50
+      },
+      "exclude_time_range": {
+        "daily": "",
+        "begin": "",
+        "end": ""
+      }
+    }
   }
 }
 ```
@@ -362,7 +362,7 @@ POST数据包体类型(content-type) : **JSON**
 | `pool_finger`  | int |  | 指纹识别并发数率 默认50 |
 | `excludeTimeRange`   | string |  | 扫描排除时间段 示例</br>"daily,9:00,17:00" 排除每天的早9至晚5</br>"everyWorKDay,9:00,17:00"排除每个工作日的早9至晚5</br>"OpeningtimeBroad,,"排除开盘时间(宽泛),所有工作日以及周六的0点至5点 ||  |  |  |  |
 
-**响应**:   
+**响应**:   
 成功时, 返回本次提交扫描的任务信息(task对象,上同,JSON格式) status_code为 200  
 已经有任务在运行时或者参数设置错误时, 返回status_code为 500, 内容为错误信息  
 
@@ -370,13 +370,13 @@ POST数据包体类型(content-type) : **JSON**
 请求  
 ```json
 {
-    "target":"192.168.1.1/24",
-    "location":"测试本地网",
-    "name":"测试扫描任务",
-    "port":"top1000",
-    "httpx":true,
-    "rate":2000,
-    "screenshot":true
+    "target":"192.168.1.1/24",
+    "location":"测试本地网",
+    "name":"测试扫描任务",
+    "port":"top1000",
+    "httpx":true,
+    "rate":2000,
+    "screenshot":true
 }
 ```
 响应  
@@ -394,27 +394,27 @@ POST数据包体类型(content-type) : **JSON**
   "task_success_num": 0,
   "task_process": "NaN",
   "option": {
-    "location": "测试本地网",
-    "mode": "pn",
-    "target": "192.168.1.1/24",
-    "exclude_target": "",
-    "port": "top1000",
-    "rate": 2000,
-    "timeout": 800,
-    "httpx": true,
-    "ping": false,
-    "fingerDB": "",
-    "screenshot": false,
-    "pool": {
-      "ping": 10,
-      "scan": 10,
-      "finger": 50
-    },
-    "exclude_time_range": {
-      "daily": "",
-      "begin": "",
-      "end": ""
-    }
+    "location": "测试本地网",
+    "mode": "pn",
+    "target": "192.168.1.1/24",
+    "exclude_target": "",
+    "port": "top1000",
+    "rate": 2000,
+    "timeout": 800,
+    "httpx": true,
+    "ping": false,
+    "fingerDB": "",
+    "screenshot": false,
+    "pool": {
+      "ping": 10,
+      "scan": 10,
+      "finger": 50
+    },
+    "exclude_time_range": {
+      "daily": "",
+      "begin": "",
+      "end": ""
+    }
   }
 }
 ```
