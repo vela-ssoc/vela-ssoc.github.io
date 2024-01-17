@@ -25,6 +25,14 @@ Active scanning of network assets
 2024-01-08   v0.4.7   修复内置TOP5000端口号部分错误  
 2024-01-09   v0.4.8   修复对任务监视器的通道关闭处理相关错误  
 2024-01-09   v0.4.8   完善管道操作数据结构和相关文档  
+2024-01-10   v0.4.8   修复站点截图模块一些边界条件问题
+2024-01-16   v0.4.9   内部HTTP API升级改造
+2024-01-16   v0.4.9   内部HTTP API支持展示上一次历史任务信息
+2024-01-17   v0.4.9   内部HTTP API任务详细信息数据结构优化
+2024-01-17   v0.4.9   扫描任务状态相关功能优化
+2024-01-17   v0.4.9   支持展示和动态计算扫描开始时间,扫描结束时间和扫描耗时
+2024-01-17   v0.4.9   实时上报扫描结果时, 加入了扫描任务ID, 方便后期查询         
+2024-01-17   v0.4.9   整理完善文档       
 
 
 ## 功能
@@ -221,8 +229,8 @@ radar扫描主服务信息以及当前运行任务信息(若存在)
 |(task).`id`|sting|创建任务唯一的uuid|
 |(task).`status`|int|**Task_Status枚举类型**|
 |(task).`debug`|bool|tsak是否处于debug状态|
-|(task).`start_time`|string|任务开始时间"2023-01-02 15:04:05"|
-|(task).`end_time`|string|任务结束时间"2023-01-02 15:04:05"|
+|(task).`start_time`|string|任务开始时间</br>`RFC3339Nano`标准格式 </br>示例"2006-01-02T15:04:05.999999999Z07:00"|
+|(task).`end_time`|string|任务结束时间</br>`RFC3339Nano`标准格式 </br>示例"2006-01-02T15:04:05.999999999Z07:00"|
 |(task).`task_all_num`|int|所有的扫描子任务项数|
 |(task).`task_success_num`|int|已完成的扫描子任务项数|
 |(task).`task_process`|string|扫描进度%0.2f (0-100.00)|
@@ -256,7 +264,7 @@ type Option struct {
 	Timeout          int            `json:"timeout"`
 	Httpx            bool           `json:"httpx"`
 	Ping             bool           `json:"ping"`
-	FingerDB         string         `json:"fingerDB"`
+	FingerDB         string         `json:"finger_db"`
 	Screenshot       bool           `json:"screenshot"`
 	Pool             Pool           `json:"pool"`
 	ExcludeTimeRange util.TimeRange `json:"exclude_time_range"`
