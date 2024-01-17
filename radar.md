@@ -121,6 +121,9 @@ end
 | component  | []string     | 组件标签                    |
 | http_info  | *HttpInfo    | web服务的指纹以及相关信息          |
 | banner     | []byte(json) | tcp服务的banner信息          |
+| task_id    | string       | 任务Id                    |  
+
+⚠️ report实时上报扫描结果时,数据结构也是这个  
 
 
 上表中的http_info字段是一个对象, HttpInfo的数据结构如下表
@@ -179,7 +182,7 @@ web站点截图服务相关配置
 | thread | string |  | 同时启动的tab个数 |
 | timeout | string |  | 站点打开超时时间(单位:秒) |
 | resultDir | string |  | 本地保存的站点截图图片文件夹</br>⚠️save选项开启时才起作用 |
-| debug | bool |  | 是否开启debug日志打印 |
+| debug | bool |  | 是否开启debug日志打印 |  
 **返回值** 无   
 
 
@@ -188,8 +191,146 @@ web站点截图服务相关配置
 
 ### **GET** `/api/v1/arr/agent/radar/status`
 获取当前扫描服务状态  
-**响应**:   
+#### 请求
+GET 无需参数  
+#### 响应
 radar扫描主服务信息以及当前运行任务信息(若存在)  
+**响应包数据结构(JSON):**  
+
+|·字段|数据类型|说明|
+|----|----|----|
+|`name`|string|radar扫描主服务名(lua脚本里初始化服务时定义的)|
+|`status`|string|radar扫描服务状态  idle 空闲  working正在扫描|
+|`thread`|string|radar扫描主服务配置默认线程数|
+|`udp`|bool|radar扫描主服务配置默认UDP是否开启(功能暂未开放)|
+|`fastmode`|string|radar扫描主服务配置默认快速扫描模式是否开启(功能暂未开放)|
+|`defaultTimeout`|int|radar扫描主服务配置指纹识别默认超时时间(单位:毫秒)|
+|`task_all_num`|int|所有的扫描子任务项数|
+|`task_success_num`|int|已完成的扫描子任务项数|
+|`task_process`|float|扫描进度%0.2f (0-100.00)|
+|`pause_signal`|int|暂停信号 1是机器自动暂停 2是用户人工手动暂停 0是正常运行|
+|`task`|**task对象**|没有任务在运行时, 返回空字符串`""`</br>有任务在运行时, 返回当前运行任务的详细信息|
+|`last_task`|**task对象**|没有上次扫描任务时, 时返回空字符串`""`</br>有上次扫描任务时, 返回上次扫描任务的详细信息|
+
+
+**task对象**
+
+|字段|数据类型|说明|
+|----|----|----|
+|(task).`name`|sting|任务名称|
+|(task).`id`|sting|创建任务唯一的uuid|
+|(task).`status`|int|**Task_Status枚举类型**|
+|(task).`debug`|bool|tsak是否处于debug状态|
+|(task).`start_time`|string|任务开始时间"2023-01-02 15:04:05"|
+|(task).`end_time`|string|任务结束时间"2023-01-02 15:04:05"|
+|(task).`task_all_num`|int|所有的扫描子任务项数|
+|(task).`task_success_num`|int|已完成的扫描子任务项数|
+|(task).`task_process`|string|扫描进度%0.2f (0-100.00)|
+|(task).`timeuse_second`|float|任务耗时 单位:秒|
+|(task).`timeuse_msg`|string|任务耗时 时:分:秒|
+|(task).`option`|**option对象**|⚠️返回的原生Marshal()方法的bytes, 结构体定义如下所示|
+
+**Task_Status枚举类型**
+
+|值(int)|名称|说明|
+|----|----|----|
+|0|Task_Status_Init|初始化状态|
+|1|Task_Status_Running|正在扫描|
+|2|Task_Status_Success|扫描完成|
+|3|Task_Status_Paused_By_Program|程序暂停(如当前出在禁扫时间)|
+|4|Task_Status_Paused_Artificial|人工暂停|q
+|5|Task_Status_Error|扫描出错|
+|6|Task_Status_Unknown|未知状态|
+
+
+**option对象**
+```go
+// 字段信息备注查看下面"下发扫描任务"表格
+type Option struct {
+	Location         string         `json:"location"`
+	Mode             string         `json:"mode"`
+	Target           string         `json:"target"`
+	ExcludedTarget   string         `json:"exclude_target"`
+	Port             string         `json:"port"`
+	Rate             int            `json:"rate"`
+	Timeout          int            `json:"timeout"`
+	Httpx            bool           `json:"httpx"`
+	Ping             bool           `json:"ping"`
+	FingerDB         string         `json:"fingerDB"`
+	Screenshot       bool           `json:"screenshot"`
+	Pool             Pool           `json:"pool"`
+	ExcludeTimeRange util.TimeRange `json:"exclude_time_range"`
+	MinioCfg         util.MinioCfg  `json:"-"`
+}
+
+type Pool struct {
+	Ping   int `json:"ping"`
+	Scan   int `json:"scan"`
+	Finger int `json:"finger"`
+}
+
+type TimeRange struct {
+	Daily string `json:"daily"`
+	Begin string `json:"begin"`
+	End   string `json:"end"`
+}
+
+type MinioCfg struct {
+	AccessKey string
+	SecretKey string
+	Name      string
+	Endpoint  string
+	UseSSL    bool
+}
+```
+#### 数据示例
+```json
+{
+  "name": "radar",
+  "status": "idle",
+  "thread": 25,
+  "udp": false,
+  "fastmode": false,
+  "default_timeout": 500,
+  "task": "",
+  "last_task": {
+    "name": "测试扫描任务",
+    "id": "dd57a313-ba8c-46c2-903f-77c6d067179d",
+    "debug": false,
+    "status": 2,
+    "start_time": "2024-01-17 13:32:58",
+    "end_time": "2024-01-17 13:35:13",
+    "timeuse_second": 135.28085949,
+    "timeuse_msg": "0小时02分钟15秒",
+    "task_all_num": 257280,
+    "task_success_num": 257280,
+    "task_process": "100.00",
+    "option": {
+      "location": "测试本地网",
+      "mode": "pn",
+      "target": "192.168.1.1/24",
+      "exclude_target": "",
+      "port": "top1000",
+      "rate": 2000,
+      "timeout": 800,
+      "httpx": true,
+      "ping": false,
+      "fingerDB": "",
+      "screenshot": false,
+      "pool": {
+        "ping": 10,
+        "scan": 10,
+        "finger": 50
+      },
+      "exclude_time_range": {
+        "daily": "",
+        "begin": "",
+        "end": ""
+      }
+    }
+  }
+}
+```
 
 ### **POST** `/api/v1/arr/agent/radar/runscan`
 下发和运行扫描任务 ( 如果已有扫描任务正在进行则无法运行 )  
@@ -214,10 +355,11 @@ POST数据包体类型(content-type) : **JSON**
 | `excludeTimeRange`   | string |  | 扫描排除时间段 示例</br>"daily,9:00,17:00" 排除每天的早9至晚5</br>"everyWorKDay,9:00,17:00"排除每个工作日的早9至晚5</br>"OpeningtimeBroad,,"排除开盘时间(宽泛),所有工作日以及周六的0点至5点 ||  |  |  |  |
 
 **响应**:   
-成功时, 返回本次提交扫描的任务信息(JSON格式) status_code为 200  
+成功时, 返回本次提交扫描的任务信息(task对象,上同,JSON格式) status_code为 200  
 已经有任务在运行时或者参数设置错误时, 返回status_code为 500, 内容为错误信息  
 
-**例子**:
+#### 数据示例
+请求  
 ```json
 {
     "target":"192.168.1.1/24",
@@ -225,11 +367,51 @@ POST数据包体类型(content-type) : **JSON**
     "name":"测试扫描任务",
     "port":"top1000",
     "httpx":true,
+    "rate":2000,
     "screenshot":true
 }
 ```
+响应  
+```json
+{
+  "name": "测试扫描任务",
+  "id": "dd46f2ca-461e-4112-9e64-e931fcde13a1",
+  "debug": false,
+  "status": 0,
+  "start_time": "2024-01-17 14:01:24",
+  "end_time": "",
+  "timeuse_second": 0.000057763,
+  "timeuse_msg": "0小时00分钟00秒",
+  "task_all_num": 0,
+  "task_success_num": 0,
+  "task_process": "NaN",
+  "option": {
+    "location": "测试本地网",
+    "mode": "pn",
+    "target": "192.168.1.1/24",
+    "exclude_target": "",
+    "port": "top1000",
+    "rate": 2000,
+    "timeout": 800,
+    "httpx": true,
+    "ping": false,
+    "fingerDB": "",
+    "screenshot": false,
+    "pool": {
+      "ping": 10,
+      "scan": 10,
+      "finger": 50
+    },
+    "exclude_time_range": {
+      "daily": "",
+      "begin": "",
+      "end": ""
+    }
+  }
+}
+```
 
-## 示例
+## 示例(lua)
 
 ```lua
 local rr = vela.radar{
