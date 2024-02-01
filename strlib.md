@@ -1,6 +1,14 @@
 # vela-strlib
 基础字符串处理库文件
 
+## 内置方法
+
+- strlib.utf8
+- strlib.similarity
+- strlib.ac
+
+## 用法样例
+
 ```lua
     local strlib = vela.strlib             -- 导入方法
 
@@ -26,6 +34,12 @@
     if similarity(u1.text , u2.text).prop > 0.6 then
         vela.Debug("hit > 0.6")
     end
+
+    local black = strlib.ac{"你好", "很好", "还好"}
+
+    local ok , ret = black("今天的天气还好,心情很好!")
+    vela.Debug("%v , %s" , ok , ret)
+    
 ```
 
 ## 相似度算法
