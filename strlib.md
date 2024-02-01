@@ -35,8 +35,7 @@
         vela.Debug("hit > 0.6")
     end
 
-    local black = strlib.ac{"你好", "很好", "还好"}
-
+    local black = strlib.ac({"你好", "很好", "还好"} , true) -- true: 是否返回命中结果
     local ok , ret = black("今天的天气还好,心情很好!")
     vela.Debug("%v , %s" , ok , ret)
     
