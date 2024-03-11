@@ -33,6 +33,13 @@ Active scanning of network assets
 2024-01-17   v0.4.9   支持展示和动态计算扫描开始时间,扫描结束时间和扫描耗时  
 2024-01-17   v0.4.9   实时上报扫描结果时, 加入了扫描任务ID, 方便后期查询  
 2024-01-17   v0.4.9   整理完善文档  
+2024-01-29   v0.4.10  修复上报的资产信息不带location的问题  
+2024-01-29   v0.5.0   新增扫描手动暂停和恢复扫描任务接口  
+2024-03-02   v0.5.1   优化内部任务调度API, 修复若干问题  
+2024-03-04   v0.5.1   尝试解决超长时间任务无法退出问题   
+2024-03-05   v0.5.2   现针对扫描目标输入,支持多个IP或IP段组合(beta)  
+2024-03-06   v0.5.3   处理参数设置互相关联的条件下, 特定一些设置会触发crash问题  
+2024-03-06   v0.5.3   新增控制是否上报结果的参数  
 
 
 ## 功能
@@ -48,6 +55,8 @@ Active scanning of network assets
 9. web站点截图功能, 并上传至minio图床
 10. 支持三方指纹库动态加载和更新(基于三方依赖)
 11. 设置扫描排除时间段(在指定时间段内暂停)
+12. 支持手动暂停和恢复任务
+13. 针对扫描目标输入,支持多个IP或IP段组合(beta)
 
 ## todo
 
@@ -62,7 +71,9 @@ Active scanning of network assets
 9. 优化扫描结果的数据结构
 10. 分布式集群扫描,智能分配扫描任务
 11. 处理模块实时返回数据的问题
-12. ……
+12. 尝试处理 lua脚本更新 旧的扫描任务没有强制停止问题
+13. 启发式扫描, 针对超大网段的扫描效率优化
+14. ……
 
 ## Lua API
 ### 主服务 radar
@@ -171,6 +182,7 @@ end
 | `(task).screenshot(..)`   | bool | 自身task对象(链式调用) |  | 是否开启站点截图功能 |
 | `(task).ping(..)`   | bool | 自身task对象(链式调用) |  | 是否开启ping存活探测 |
 | `(task).debug(..)`   | bool | 自身task对象(链式调用) |  | 是否开启debug模式(console输出debug日志) |
+| `(task).report(..)`   | bool | 自身task对象(链式调用) |  | 是否开启资产自动上报功能 |
 | `(task).pool(..)`   | int scan,int finger,int ping | 自身task对象(链式调用) |  | ping探测并发数率 默认10</br>scan并发数率 默认10</br>指纹识别并发数率 默认50 |
 | `(task).excludeTimeRange(..)`   | string | 自身task对象(链式调用) |  | 扫描排除时间段 示例</br>"daily,9:00,17:00" 排除每天的早9至晚5</br>"everyWorKDay,9:00,17:00"排除每个工作日的早9至晚5</br>"OpeningtimeBroad,,"排除开盘时间(宽泛),所有工作日以及周六的0点至5点 |
 | `(task).run(..)` | null | null | ✅ | 开启扫描 </br>⚠️run方法需在链式调用的最后一步调用 |
@@ -353,6 +365,8 @@ POST数据包体类型(content-type) : **JSON**
 | `port` | string |  | 端口  默认top1000 |
 | `rate`   | int |  | 传输层协议基础发包速率 默认500 |
 | `timeout` | int |  | 超时时间(ms) 默认800 |
+| `debug`   | bool |  | 是否开启debug模式 |
+| `report`   | bool |  | 是否开启资产自动上报功能 |
 | `httpx`   | bool |  | 是否开启http指纹探测 |
 | `fingerDB`   | bool |  | 指定http指纹库三方依赖(不指定则使用内置默认指纹库) |
 | `screenshot`   | bool |  | 是否开启站点截图功能|
@@ -360,6 +374,7 @@ POST数据包体类型(content-type) : **JSON**
 | `pool_ping`   | int |  | ping探测并发数率 默认10 |
 | `pool_scan`   | int |  | scan并发数率 默认10 |
 | `pool_finger`  | int |  | 指纹识别并发数率 默认50 |
+| `exclude_target`  | string |  | 排除扫描ip 支持IP/CIDR/IP范围 并可以以","组合 |
 | `excludeTimeRange`   | string |  | 扫描排除时间段 示例</br>"daily,9:00,17:00" 排除每天的早9至晚5</br>"everyWorKDay,9:00,17:00"排除每个工作日的早9至晚5</br>"OpeningtimeBroad,,"排除开盘时间(宽泛),所有工作日以及周六的0点至5点 ||  |  |  |  |
 
 **响应**:   
@@ -385,6 +400,7 @@ POST数据包体类型(content-type) : **JSON**
   "name": "测试扫描任务",
   "id": "dd46f2ca-461e-4112-9e64-e931fcde13a1",
   "debug": false,
+  "report": true,
   "status": 0,
   "start_time": "2024-01-17 14:01:24",
   "end_time": "",
@@ -451,3 +467,5 @@ rr.task("192.168.1.1/24").port("top1000").httpx(true).exclude("192.168.1.100,192
 
 1. 在做外网探测时, 可能会因为syn的包过多, 导致网络无法链接
 2. 使用syn做扫描时, 暂时无法实时计算准确进度
+3. exclude ip功能没做优化, 如果exclude多个B段可能会出现问题
+
