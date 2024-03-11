@@ -56,6 +56,7 @@
 - [ip2region](ip2region.md)
 - [osquery](osquery.md)
 - [syslog](syslog.md)
+- [strlib](strlib.md)
 - [终端标签](自动标签.md)
 - [csv](csv.md)
 - [radar网络资产扫描探测](radar.md)
