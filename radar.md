@@ -40,6 +40,12 @@ Active scanning of network assets
 2024-03-05   v0.5.2   现针对扫描目标输入,支持多个IP或IP段组合(beta)  
 2024-03-06   v0.5.3   处理参数设置互相关联的条件下, 特定一些设置会触发crash问题  
 2024-03-06   v0.5.3   新增控制是否上报结果的参数  
+2024-03-16   v0.5.4   修复不同网络环境下minio资源文件上传和展示相关问题  
+2024-03-20   v0.5.5   RPC和Oracle指纹信息优化  
+2024-03-20   v0.5.5   子任务调度逻辑  
+2024-03-20   v0.5.5   指纹识别功能优化  
+2024-03-22   v0.5.5   对内部子任务调度逻辑进行优化改进  
+2024-03-25   v0.5.5   screenshot模块多处优化改进,处理一些边界条件下的特殊情况  
 
 
 ## 功能
@@ -101,7 +107,9 @@ Active scanning of network assets
 | --- | --- | --- | --- |
 | accessKey | string |  | accessKey |
 | secretKey | string |  | secretKey |
-| endpoint | string |  | endpoint URI |
+| endpoint | string |  | 内部上传用的地址 |
+| previewEndpoint | string |  | 外部预览用的地址 |
+| bucketName | string |  | bucket桶名称 |
 | useSSL | bool |  | 是否启用SSL |
 
 
@@ -258,7 +266,7 @@ radar扫描主服务信息以及当前运行任务信息(若存在)
 |1|Task_Status_Running|正在扫描|
 |2|Task_Status_Success|扫描完成|
 |3|Task_Status_Paused_By_Program|程序暂停(如当前出在禁扫时间)|
-|4|Task_Status_Paused_Artificial|人工暂停|q
+|4|Task_Status_Paused_Artificial|人工暂停|
 |5|Task_Status_Error|扫描出错|
 |6|Task_Status_Unknown|未知状态|
 
