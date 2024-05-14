@@ -39,6 +39,10 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 **2024年4月15日**  
 1.Linux上系统服务采集更新优化  
 2.加入进程的句柄信息采集功能
+**2024年5月6日**
+加入windows系统杀软采集(WD原生方法)  
+**2024年5月14日**
+完善数据采集逻辑和内部接口  
 
 ## 功能
 ### Overview
@@ -61,7 +65,7 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 | 历史命令采集                         | ✔       | ✔     |                                                        |
 | 系统防火墙规则采集                    | ✔      | 🏗      |                                                       |
 | 杀软\EDR安装和运行信息采集             |        |         |                                                       |
-| 是否有外网访问权限 公网出口IP, 是有独立IP|       |         |                                                       |
+| 是否有外网访问权限 公网出口IP, 是否有独立IP|       |         |                                                       |
 | hosts采集                            |        |        |                                                        |
 | arp缓存采集                          |         |       |                                                        |
 | dns缓存采集                          |         |       |                                                        |
@@ -129,13 +133,17 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 
 ## 使用说明
 目前处于开发阶段, 未暴露LUA SDK  
-运行和功能测试使用 go test进行  
-`go test -timeout 30s -run ^Testdemo02$ github.com/vela-ssoc/vela-eagleeye -buildvcs=false -count=1 -v`
+**第一步 运行模块**  
+运行lua脚步调用该模块  
+**第二步 查看数据**  
+方式1: 通过内部HTTP API在线查看采集的数据
+方式2: 下载`.ssc.db`文件,本地查看采集的数据
+
 
 ## HTTP API
 ⚠API统一前缀 `/api/v1/arr/agent/eagleeye/`  
 
-### 通用(generic)
+### 通用(generic)接口
 ##### .../collectAll  采集所有信息  
 **备注**: 采集的信息统一存入本地的bucket  
 以下接口都是读取的bucket内的缓存数据, 而不是实时重新采集  
@@ -156,7 +164,7 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 待编写详细文档和说明  
 
 
-### Windows
+### Windows特有接口
 以下接口仅Windows可用  
 ##### .../autoRuns  获取开机自启动信息  
 待编写详细文档和说明  
@@ -179,8 +187,9 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 ##### .../patches  获取补丁信息  
 待编写详细文档和说明  
 
-### Linux
-
+### Linux 特有接口  
+##### .../docker  获取docker相关信息
+待编写详细文档和说明  
 
 ## LUA API
 
@@ -195,22 +204,24 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 
 **返回值** eagleeye服务对象 
 
-#### (rander).startService()方法
+#### (eagleeye).startService()方法
 启动服务  
 **传入参数** 无  
 **返回值** 无  
 
-#### (rander).collectAll()方法
+#### (eagleeye).collectAll()方法
 一键采集所有信息  
+信息默认存储到agent统一的bucket中(默认为`.ssc.db`)  
+
 **传入参数** 无  
 **返回值** 无  
 
-#### (define).define()方法
+#### (eagleeye).define()方法
 开启HTTP API服务  
 **传入参数** 无  
 **返回值** 无  
 
-#### (define).cache()方法
+#### (eagleeye).cache()方法
 设置缓存模式(存入本地的bucket)  
 **传入参数** 无  
 **返回值** 无  
