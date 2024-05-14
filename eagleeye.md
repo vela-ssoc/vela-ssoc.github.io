@@ -196,13 +196,15 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 ### 主服务
 #### 初始化方法 vela.eagleeye{} 
 初始化eagleeye服务对象  
-传入参数为一个LUA Table  
-| 参数名 | 数据类型 | 是否必填 | 说明 |
-| --- | --- | --- | --- |
-| name | string |  | 扫描主服务名称 |
-| debug | bool |  | 是否开启debug模式(console输出debug日志) |
+传入参数为一个`LUA Table`, 字段说明如下  
 
-**返回值** eagleeye服务对象 
+| 参数名| 数据类型   | 是否必填   |  说明|
+|------|--------|--------|--------------------|
+| name | string |   | 扫描主服务名称           |
+| debug | bool |  | 是否开启debug模式(console输出debug日志)     |
+
+
+**返回值**  `eagleeye服务对象` 
 
 #### (eagleeye).startService()方法
 启动服务  
@@ -230,7 +232,10 @@ Linux系统软件清单采集, 以及对接系统组件供应链安全(前期)
 eg.1 :  
 ```lua
 serv=vela.eagleeye{}    
+-- 启动服务
 serv.startService()
+-- 开启内部HTTP API
 serv.define()
+-- 采集一次
 serv.collectAll()
 ```
