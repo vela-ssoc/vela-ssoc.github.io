@@ -62,6 +62,7 @@
 - [radar网络资产扫描探测](radar.md)
 - [barracuda日志解析器](barracuda.md)
 - [eagleeye溯源取证信息采集模块](eagleeye.md)
+- [pam-Linux可插拔认证模块](pam.md)
 - [案例1](案例1.md)
 - [案例2](案例2.md)
 - [案例3](案例3.md)
